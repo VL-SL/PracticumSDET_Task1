@@ -5,22 +5,22 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class ManagerPage extends BasePage {
-    private final By addCustomerButton = By.xpath("//button[contains(text(),'Add Customer')]");
-    private final By customersButton = By.xpath("//button[contains(text(),'Customers')]");
+    private final By addCustomerButton = By.xpath("//button[@ng-click='addCust()']");
+    private final By customersButton = By.xpath("//button[@ng-click='showCust()']");
 
     public ManagerPage(WebDriver driver) {
         super(driver);
     }
 
-    @Step("Нажать кнопку 'Add Customer' для перехода на страницу добавления клиента")
+    @Step("Нажатие кнопки 'Add Customer'")
     public AddCustomerPage clickAddCustomerButton() {
-        this.click(this.addCustomerButton);
-        return new AddCustomerPage(this.driver);
+        click(addCustomerButton);
+        return new AddCustomerPage(driver);
     }
 
-    @Step("Нажать кнопку 'Customers' для перехода к списку клиентов")
+    @Step("Нажатие кнопки 'Customers'")
     public CustomersPage clickCustomersButton() {
-        this.click(this.customersButton);
-        return new CustomersPage(this.driver);
+        click(customersButton);
+        return new CustomersPage(driver);
     }
 }

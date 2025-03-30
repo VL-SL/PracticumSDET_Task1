@@ -1,44 +1,48 @@
 package svm.sibmirsoft.pages;
 
+import java.util.List;
+
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import java.util.List;
 
 public class CustomersPage extends BasePage {
     private final By firstNameHeader = By.xpath("//a[@ng-click=\"sortType = 'fName'; sortReverse = !sortReverse\"]");
-    private final By firstNameCells = By.xpath("//table//tbody//tr/td[1]");
-    private final By searchCustomerInput = By.xpath("//input[@placeholder='Search Customer']");
-    private final By customerRows = By.xpath("//table[@class='table table-bordered table-striped']//tbody//tr");
-    private final By accountNumberCells = By.xpath("//table//tbody//tr/td[4]");
-    private final By deleteButtons = By.xpath("//button[contains(text(),'Delete')]");
+    private final By firstNameCells = By.xpath("//tr[@ng-repeat='cust in Customers | orderBy:sortType:sortReverse " +
+            "| filter:searchCustomer']/td[1]");
+    private final By searchCustomerInput = By.xpath("//input[@ng-model='searchCustomer']");;
+    private final By accountNumberCells = By.xpath("//td[.//*[@ng-repeat='account in cust.accountNo']]");
+    private final By deleteButtons = By.xpath("//button[@ng-click='deleteCust(cust)']");
 
     public CustomersPage(WebDriver driver) {
         super(driver);
     }
 
-    @Step("Нажать на заголовок столбца 'First Name' для сортировки")
-    public void clickFirstNameHeader() {
-        this.click(this.firstNameHeader);
+    @Step("Нажатие на заголовок столбца 'First Name' для сортировки")
+    public CustomersPage clickFirstNameHeader() {
+        click(firstNameHeader);
+        return this;
     }
 
-    @Step("Получить список всех имен клиентов")
+    @Step("Получение списка всех имен клиентов")
     public List<String> getAllFirstNames() {
-        return this.getTextsFromElements(this.firstNameCells);
+        return getTextsFromElements(firstNameCells);
     }
 
     @Step("Поиск клиента по имени: {name}")
-    public void searchCustomer(String name) {
-        this.inputText(this.searchCustomerInput, name);
+    public CustomersPage searchCustomer(String name) {
+        inputText(searchCustomerInput, name);
+        return this;
     }
 
-    @Step("Удалить первого найденного клиента")
-    public void deleteFirstFoundCustomer() {
-        this.click(this.deleteButtons);
+    @Step("Удаление первого найденного клиента")
+    public CustomersPage deleteFirstFoundCustomer() {
+        click(deleteButtons);
+        return this;
     }
 
-    @Step("Получить список всех номеров счетов")
+    @Step("Получение номеров счетов")
     public List<String> getAllAccountNumbers() {
-        return this.getTextsFromElements(this.accountNumberCells);
+        return getTextsFromElements(accountNumberCells);
     }
 }

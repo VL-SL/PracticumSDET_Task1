@@ -11,19 +11,22 @@ public class BaseTest {
     protected WebDriver driver;
     protected final String BASE_URL = "https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager";
 
+    public BaseTest() {
+    }
+
     @BeforeMethod
     public void setUp() {
         WebDriverManager.chromedriver().setup();
-        this.driver = new ChromeDriver();
-        this.driver.manage().window().maximize();
-        this.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10L));
-        this.driver.get("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10L));
+        driver.get("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager");
     }
 
     @AfterMethod
     public void tearDown() {
-        if (this.driver != null) {
-            this.driver.quit();
+        if (driver != null) {
+            driver.quit();
         }
 
     }
