@@ -1,63 +1,54 @@
-### Build directories ###
-/target/
-!/target/classes/
-!/target/test-classes/
+target/
 !.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-### Allure ###
-allure-results/
-allure-report/
-.allure/
-
-### IDE ###
-# IntelliJ
-.idea/
-*.iml
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
 *.iws
+*.iml
 *.ipr
-.idea_modules/
-out/
 
-# Eclipse
+### Eclipse ###
+.apt_generated
 .classpath
-.project
-.settings/
-bin/
 .factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# NetBeans
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-# VS Code
-.vscode/
-
-### System files ###
-.DS_Store
-Thumbs.db
-
-### Logs and temp files ###
-*.log
-*.tmp
-*.swp
-*.swo
-
-### Environment files ###
-*.env
-*.env.local
-
-### Compiled files ###
-*.class
-*.jar
-*.war
-*.ear
-
-### Dependency directories ###
-.m2/
-.gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+# Идея
+.idea/
+*.iml
+
+*.env
+
+*.log
+*.tmp
+
+*.class
+*.jar
+*.war
+
+.m2/
+.gradle/
