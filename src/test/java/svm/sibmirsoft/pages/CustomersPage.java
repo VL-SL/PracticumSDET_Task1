@@ -6,41 +6,36 @@ import org.openqa.selenium.WebDriver;
 
 public class CustomersPage extends BasePage {
     private final By firstNameHeader = By.xpath("//a[@ng-click=\"sortType = 'fName'; sortReverse = !sortReverse\"]");
-    private final By firstNameCells = By.xpath("//table//tbody//tr/td[1]");
-    private final By searchCustomerInput = By.xpath("//input[@placeholder='Search Customer']");
-    private final By customerRows = By.xpath("//table[@class='table table-bordered table-striped']//tbody//tr");
-    private final By accountNumberCells = By.xpath("//table//tbody//tr/td[4]");
-    private final By deleteButtons = By.xpath("//button[contains(text(),'Delete')]");
+    private final By firstNameCells = By.xpath("//tr[@ng-repeat='cust in Customers | orderBy:sortType:sortReverse " +
+            "| filter:searchCustomer']/td[1]");
+    private final By searchCustomerInput = By.xpath("//input[@ng-model='searchCustomer']");;
+    private final By accountNumberCells = By.xpath("//td[.//*[@ng-repeat='account in cust.accountNo']]");
+    private final By deleteButtons = By.xpath("//button[@ng-click='deleteCust(cust)']");
 
     public CustomersPage(WebDriver driver) {
         super(driver);
     }
 
-    public void clickFirstNameHeader() {
-        this.click(this.firstNameHeader);
+    public CustomersPage clickFirstNameHeader() {
+        click(firstNameHeader);
+        return this;
     }
 
     public List<String> getAllFirstNames() {
-        return this.getTextsFromElements(this.firstNameCells);
+        return getTextsFromElements(firstNameCells);
     }
 
-    public void searchCustomer(String name) {
-        this.inputText(this.searchCustomerInput, name);
+    public CustomersPage searchCustomer(String name) {
+        inputText(searchCustomerInput, name);
+        return this;
     }
 
-    public void deleteFirstFoundCustomer() {
-        this.click(this.deleteButtons);
-    }
-
-    public String getFirstFoundAccountNumber() {
-        return (String)this.getTextsFromElements(this.accountNumberCells).get(0);
-    }
-
-    public int getVisibleCustomersCount() {
-        return this.findElements(this.customerRows).size();
+    public CustomersPage deleteFirstFoundCustomer() {
+        click(deleteButtons);
+        return this;
     }
 
     public List<String> getAllAccountNumbers() {
-        return this.getTextsFromElements(this.accountNumberCells);
+        return getTextsFromElements(accountNumberCells);
     }
 }
