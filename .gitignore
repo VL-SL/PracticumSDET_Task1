@@ -55,7 +55,6 @@ Thumbs.db
 *.war
 *.ear
 
-### Dependency directories ###
 .m2/
 .gradle/
 build/
