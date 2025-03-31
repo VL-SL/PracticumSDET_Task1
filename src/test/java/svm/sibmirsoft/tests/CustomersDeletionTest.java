@@ -13,7 +13,13 @@ public class CustomersDeletionTest extends BaseTest {
     @BeforeMethod
     public void setUpPages() {
         driver.get(BASE_URL + "/list");
+
+        SoftAssert softAssert = new SoftAssert();
         customersPage = new CustomersPage(driver);
+
+        List<String> originalNames = customersPage.getAllFirstNames();
+        softAssert.assertFalse(originalNames.isEmpty(), "Нет клиентов для тестирования удаления");
+        softAssert.assertAll();
     }
 
     @Test
