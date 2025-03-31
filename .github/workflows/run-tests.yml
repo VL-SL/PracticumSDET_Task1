@@ -22,7 +22,6 @@ jobs:
 
       - name: Install Chrome
         run: |
-          # Скачиваем и устанавливаем Chrome
           $chromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
           if (-not (Test-Path $chromePath)) {
               Invoke-WebRequest "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile "$env:TEMP\chrome_installer.exe"
@@ -31,17 +30,12 @@ jobs:
 
       - name: Download ChromeDriver
         run: |
-          # Узнаем версию Chrome
           $chromeVersion = (Get-Item "$env:ProgramFiles\Google\Chrome\Application\chrome.exe").VersionInfo.FileVersion
           $chromeMajorVersion = $chromeVersion.Split('.')[0]
-          
-          # Скачиваем ChromeDriver
           $chromeDriverUrl = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$chromeMajorVersion"
           $chromeDriverVersion = (Invoke-WebRequest -Uri $chromeDriverUrl).Content.Trim()
           $chromeDriverZip = "$env:TEMP\chromedriver_win32.zip"
           Invoke-WebRequest "https://chromedriver.storage.googleapis.com/$chromeDriverVersion/chromedriver_win32.zip" -OutFile $chromeDriverZip
-          
-          # Распаковываем и добавляем в PATH
           Expand-Archive -Path $chromeDriverZip -DestinationPath "$env:TEMP\chromedriver"
           Add-Content -Path $env:GITHUB_PATH -Value "$env:TEMP\chromedriver"
 
@@ -52,7 +46,7 @@ jobs:
           copy target\allure-results\* allure-results\ || echo "No Allure results"
 
       - name: Upload Allure report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: allure-report-${{ github.ref_name }}
