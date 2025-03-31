@@ -9,10 +9,12 @@ import svm.sibmirsoft.pages.AddCustomerPage;
 @Epic("Тесты банковской системы")
 @Feature("Добавление клиентов")
 public class AddCustomerTest extends BaseTest {
-    @Test
+    @Test(testName = "Добавление клиента с автоматически сгенерированными данными")
     @Description("Тест добавления клиента с сгенерированными данными")
     @Story("Пользователь добавляет нового клиента в систему")
     public void testAddCustomerWithGeneratedData() {
+        Allure.getLifecycle().updateTestCase(testResult ->
+                testResult.setName("Тест: добавление клиента с автоматически сгенерированными данными"));
         driver.get(BASE_URL + "/addCust");
 
         SoftAssert softAssert = new SoftAssert();

@@ -3,14 +3,11 @@ package svm.sibmirsoft.tests;
 import java.util.Comparator;
 import java.util.List;
 
+import io.qameta.allure.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import svm.sibmirsoft.pages.CustomersPage;
-import io.qameta.allure.Description;
-import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
 
 @Epic("Тесты банковской системы")
 @Feature("Управление клиентами")
@@ -19,6 +16,7 @@ public class CustomersDeletionTest extends BaseTest {
 
     @BeforeMethod
     @Description("Подготовка теста: переход на страницу клиентов")
+    @Step("Подготовка тестового окружения")
     public void setUpPages() {
         driver.get(BASE_URL + "/list");
 
@@ -34,6 +32,8 @@ public class CustomersDeletionTest extends BaseTest {
     @Description("Тест удаления клиента со средней длиной имени")
     @Story("Пользователь удаляет клиента из системы")
     public void testDeleteCustomerByAverageNameLength() {
+        Allure.getLifecycle().updateTestCase(testResult ->
+                testResult.setName("Тест: удаление клиента с именем средней длины"));
         SoftAssert softAssert = new SoftAssert();
 
         List<String> allNames = customersPage.getAllFirstNames();
