@@ -24,20 +24,50 @@ jobs:
         run: |
           $chromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
           if (-not (Test-Path $chromePath)) {
+              Write-Host "Installing Chrome..."
               Invoke-WebRequest "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile "$env:TEMP\chrome_installer.exe"
               Start-Process -FilePath "$env:TEMP\chrome_installer.exe" -Args "/silent /install" -Wait
           }
+          Write-Host "Chrome installed successfully"
+
+      - name: Get Chrome version
+        id: chrome-version
+        run: |
+          $chromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
+          $version = (Get-Item $chromePath).VersionInfo.FileVersion
+          $majorVersion = $version.Split('.')[0]
+          Write-Host "Chrome version: $version"
+          Write-Host "Chrome major version: $majorVersion"
+          echo "CHROME_VERSION=$version" >> $env:GITHUB_ENV
+          echo "CHROME_MAJOR_VERSION=$majorVersion" >> $env:GITHUB_ENV
 
       - name: Download ChromeDriver
         run: |
-          $chromeVersion = (Get-Item "$env:ProgramFiles\Google\Chrome\Application\chrome.exe").VersionInfo.FileVersion
-          $chromeMajorVersion = $chromeVersion.Split('.')[0]
-          $chromeDriverUrl = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$chromeMajorVersion"
-          $chromeDriverVersion = (Invoke-WebRequest -Uri $chromeDriverUrl).Content.Trim()
+          Write-Host "Trying to get ChromeDriver for Chrome $env:CHROME_MAJOR_VERSION"
+          try {
+              $chromeDriverVersion = (Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$env:CHROME_MAJOR_VERSION" -ErrorAction Stop).Content.Trim()
+              Write-Host "Found exact ChromeDriver version: $chromeDriverVersion"
+          } catch {
+              Write-Host "No exact match, using latest stable ChromeDriver"
+              $chromeDriverVersion = (Invoke-WebRequest -Uri "https://chromedriver.storage.googleapis.com/LATEST_RELEASE").Content.Trim()
+          }
+          
+          Write-Host "Downloading ChromeDriver $chromeDriverVersion"
           $chromeDriverZip = "$env:TEMP\chromedriver_win32.zip"
           Invoke-WebRequest "https://chromedriver.storage.googleapis.com/$chromeDriverVersion/chromedriver_win32.zip" -OutFile $chromeDriverZip
+          
+          Write-Host "Extracting ChromeDriver"
           Expand-Archive -Path $chromeDriverZip -DestinationPath "$env:TEMP\chromedriver"
           Add-Content -Path $env:GITHUB_PATH -Value "$env:TEMP\chromedriver"
+          Write-Host "ChromeDriver installed successfully"
+
+      - name: Verify ChromeDriver
+        run: |
+          & "$env:TEMP\chromedriver\chromedriver.exe" --version
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "ChromeDriver verification failed"
+              exit 1
+          }
 
       - name: Run tests with Allure
         run: |
