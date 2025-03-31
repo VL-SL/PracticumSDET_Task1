@@ -1,0 +1,59 @@
+name: Run Selenium Tests on Windows
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Chrome
+        run: |
+          # Скачиваем и устанавливаем Chrome
+          $chromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
+          if (-not (Test-Path $chromePath)) {
+              Invoke-WebRequest "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile "$env:TEMP\chrome_installer.exe"
+              Start-Process -FilePath "$env:TEMP\chrome_installer.exe" -Args "/silent /install" -Wait
+          }
+
+      - name: Download ChromeDriver
+        run: |
+          # Узнаем версию Chrome
+          $chromeVersion = (Get-Item "$env:ProgramFiles\Google\Chrome\Application\chrome.exe").VersionInfo.FileVersion
+          $chromeMajorVersion = $chromeVersion.Split('.')[0]
+          
+          # Скачиваем ChromeDriver
+          $chromeDriverUrl = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$chromeMajorVersion"
+          $chromeDriverVersion = (Invoke-WebRequest -Uri $chromeDriverUrl).Content.Trim()
+          $chromeDriverZip = "$env:TEMP\chromedriver_win32.zip"
+          Invoke-WebRequest "https://chromedriver.storage.googleapis.com/$chromeDriverVersion/chromedriver_win32.zip" -OutFile $chromeDriverZip
+          
+          # Распаковываем и добавляем в PATH
+          Expand-Archive -Path $chromeDriverZip -DestinationPath "$env:TEMP\chromedriver"
+          Add-Content -Path $env:GITHUB_PATH -Value "$env:TEMP\chromedriver"
+
+      - name: Run tests with Allure
+        run: |
+          mvn clean test
+          mkdir allure-results
+          copy target\allure-results\* allure-results\ || echo "No Allure results"
+
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: allure-report-${{ github.ref_name }}
+          path: allure-results\
