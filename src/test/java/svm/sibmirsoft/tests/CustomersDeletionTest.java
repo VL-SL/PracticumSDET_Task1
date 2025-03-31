@@ -26,7 +26,7 @@ public class CustomersDeletionTest extends BaseTest {
         customersPage = new CustomersPage(driver);
 
         List<String> originalNames = customersPage.getAllFirstNames();
-        softAssert.assertFalse(originalNames.isEmpty(), "Нет клиентов для тестирования сортировки");
+        softAssert.assertFalse(originalNames.isEmpty(), "Нет клиентов для тестирования удаления");
         softAssert.assertAll();
     }
 
