@@ -1,12 +1,11 @@
 package svm.sibmirsoft.tests;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import svm.sibmirsoft.pages.CustomersPage;
-import svm.sibmirsoft.pages.ManagerPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -20,10 +19,11 @@ public class CustomersSortingTest extends BaseTest {
     @BeforeMethod
     @Description("Подготовка теста: переход на страницу клиентов")
     public void setUpPages() {
-        ManagerPage managerPage = new ManagerPage(driver);
-        customersPage = managerPage.clickCustomersButton();
+        driver.get(BASE_URL + "/list");
 
         SoftAssert softAssert = new SoftAssert();
+        customersPage = new CustomersPage(driver);
+
         List<String> originalNames = customersPage.getAllFirstNames();
         softAssert.assertFalse(originalNames.isEmpty(), "Нет клиентов для тестирования сортировки");
         softAssert.assertAll();
@@ -34,23 +34,24 @@ public class CustomersSortingTest extends BaseTest {
     @Story("Пользователь сортирует клиентов по имени")
     public void testFirstNameSorting() {
         SoftAssert softAssert = new SoftAssert();
-        List<String> originalNames = customersPage.getAllFirstNames();
+
+        List<String> allFirstNames = customersPage
+                .clickFirstNameHeader()
+                .getAllFirstNames();
+
+        softAssert.assertEquals(
+                allFirstNames,
+                allFirstNames.stream().sorted(Comparator.reverseOrder()).toList(),
+                "Сортировка по убыванию работает некорректно"
+        );
 
         customersPage.clickFirstNameHeader();
-        List<String> uiSortedDesc = customersPage.getAllFirstNames();
-        List<String> programmaticallySortedDesc = originalNames.stream()
-                .sorted(Collections.reverseOrder())
-                .toList();
-        softAssert.assertEquals(uiSortedDesc, programmaticallySortedDesc,
-                "Сортировка по убыванию работает некорректно");
 
-        customersPage.clickFirstNameHeader();
-        List<String> uiSortedAsc = customersPage.getAllFirstNames();
-        List<String> programmaticallySortedAsc = originalNames.stream()
-                .sorted()
-                .toList();
-        softAssert.assertEquals(uiSortedAsc, programmaticallySortedAsc,
-                "Сортировка по возрастанию работает некорректно");
+        softAssert.assertEquals(
+                customersPage.getAllFirstNames(),
+                allFirstNames.stream().sorted().toList(),
+                "Сортировка по возрастанию работает некорректно"
+        );
 
         softAssert.assertAll();
     }
