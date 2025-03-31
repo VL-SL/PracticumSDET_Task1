@@ -33,15 +33,6 @@ public class BasePage {
         this.findElement(locator).sendKeys(new CharSequence[]{text});
     }
 
-    protected String getFieldValue(By locator) {
-        this.scrollToElement(locator);
-        return this.findElement(locator).getAttribute("value");
-    }
-
-    protected List<WebElement> findElements(By locator) {
-        return this.driver.findElements(locator);
-    }
-
     protected List<String> getTextsFromElements(By locator) {
         return this.driver.findElements(locator).stream().map(WebElement::getText).toList();
     }
