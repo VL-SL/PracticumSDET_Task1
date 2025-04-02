@@ -28,12 +28,10 @@ public class CustomersSortingTest extends BaseTest {
         softAssert.assertAll();
     }
 
-    @Test(threadPoolSize = 3, invocationCount = 1,  timeOut = 30000)
+    @Test(description = "Тест: сортировка по имени", threadPoolSize = 3, invocationCount = 1,  timeOut = 30000)
     @Description("Тест сортировки клиентов по имени")
     @Story("Пользователь сортирует клиентов по имени")
     public void testFirstNameSorting() {
-        Allure.getLifecycle().updateTestCase(testResult ->
-                testResult.setName("Тест: сортировка по имени"));
         SoftAssert softAssert = new SoftAssert();
 
         List<String> allFirstNames = customersPage

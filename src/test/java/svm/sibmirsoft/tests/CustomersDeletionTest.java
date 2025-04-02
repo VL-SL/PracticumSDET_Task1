@@ -28,12 +28,10 @@ public class CustomersDeletionTest extends BaseTest {
         softAssert.assertAll();
     }
 
-    @Test(threadPoolSize = 3, invocationCount = 1,  timeOut = 30000)
+    @Test(description = "Тест: удаление клиента с именем средней длины", threadPoolSize = 3, invocationCount = 1,  timeOut = 30000)
     @Description("Тест удаления клиента со средней длиной имени")
     @Story("Пользователь удаляет клиента из системы")
     public void testDeleteCustomerByAverageNameLength() {
-        Allure.getLifecycle().updateTestCase(testResult ->
-                testResult.setName("Тест: удаление клиента с именем средней длины"));
         SoftAssert softAssert = new SoftAssert();
 
         List<String> allNames = customersPage.getAllFirstNames();
